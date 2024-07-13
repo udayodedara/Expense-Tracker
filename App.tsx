@@ -1,118 +1,91 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {Image, StatusBar, StyleSheet, View} from 'react-native';
+import ManageExpense from './screens/manage_expense/ManageExpense';
+import RecentExpense from './screens/recent_expense/RecentExpense';
+import AllExpenses from './screens/all_expenses/AllExpenses';
+import {GlobalStyles} from './constants/styles';
+import {Images} from './assets/images';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const Stack = createNativeStackNavigator();
+const BottomTabs = createBottomTabNavigator();
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const ExpenseOverview = () => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+    <BottomTabs.Navigator
+      screenOptions={{
+        headerStyle: {backgroundColor: GlobalStyles.colors.primary500},
+        headerTintColor: 'white',
+        tabBarStyle: {backgroundColor: GlobalStyles.colors.primary500},
+        tabBarActiveTintColor: GlobalStyles.colors.accent500,
+      }}>
+      <BottomTabs.Screen
+        name="RecentExpense"
+        component={RecentExpense}
+        options={{
+          title: 'Recent Expenses',
+          tabBarLabel: 'Recent',
+          tabBarIcon: ({color}) => (
+            <View style={styles.imageContainerStyle}>
+              <Image
+                style={styles.imageStyle}
+                tintColor={color}
+                source={Images.hourGlass}
+              />
+            </View>
+          ),
+        }}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      <BottomTabs.Screen
+        name="AllExpenses"
+        component={AllExpenses}
+        options={{
+          title: 'All Expenses',
+          tabBarLabel: 'All Expenses',
+          tabBarIcon: ({color}) => (
+            <View style={styles.imageContainerStyle}>
+              <Image
+                style={styles.imageStyle}
+                tintColor={color}
+                source={Images.calendar}
+              />
+            </View>
+          ),
+        }}
+      />
+    </BottomTabs.Navigator>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+const App = () => {
+  return (
+    <>
+      <StatusBar barStyle={'light-content'} />
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="ExpenseOverview"
+            component={ExpenseOverview}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen name="ManageExpense" component={ManageExpense} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
+  );
+};
 
 export default App;
+
+const styles = StyleSheet.create({
+  imageStyle: {
+    height: '100%',
+    width: '100%',
+  },
+  imageContainerStyle: {
+    height: 20,
+    width: 20,
+  },
+});
